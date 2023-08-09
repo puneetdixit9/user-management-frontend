@@ -1,5 +1,5 @@
 import apiClient from '../../services/apiClient'
-import { PROJECTS_API } from '../../constants'
+import { PROJECTS_API, PENDING_USERS, APPROVE_USER } from '../../constants'
 import {
     setSelectedProject,
     setProjectsObject,
@@ -25,7 +25,13 @@ import {
     addProjectAccessFailed,
     removeProjectAccess,
     removeProjectAccessSuccess,
-    removeProjectAccessFailed
+    removeProjectAccessFailed,
+    fetchPendingUsers,
+    fetchPendingUsersSuccess,
+    fetchPendingUsersFailed,
+    approveUser,
+    approveUserSuccess,
+    approveUserFailed,
 
 } from '../reducer/projects'
 
@@ -142,5 +148,28 @@ export const removeProjectAccessAction = (projectId, body) => async dispatch => 
         return dispatch(removeProjectAccessSuccess(response.data))
     } catch (err) {
         return dispatch(removeProjectAccessFailed(err))
+    }
+}
+
+
+export const getPendingUsers = () => async dispatch => {
+    console.log('Calling Action : getPendingUsers()')
+    await dispatch(fetchPendingUsers())
+    try {
+        const response = await apiClient.get(`${PENDING_USERS}`)
+        return dispatch(fetchPendingUsersSuccess(response.data))
+    } catch (err) {
+        return dispatch(fetchPendingUsersFailed(err))
+    }
+}
+
+export const approvePendingUser = (userId, payload) => async dispatch => {
+    console.log('Calling Action : approveUser()')
+    await dispatch(approveUser())
+    try {
+        const response = await apiClient.post(`${APPROVE_USER}/${userId}`, payload)
+        return dispatch(approveUserSuccess(response.data))
+    } catch (err) {
+        return dispatch(approveUserFailed(err))
     }
 }

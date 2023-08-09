@@ -42,13 +42,11 @@ export default function SignUp() {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
         let context = {
-            //  TODO : Needs to be updated in backend
-            // first_name: data.get('firstName'),
-            // last_name: data.get('lastName'),
+            first_name: data.get('firstName'),
+            last_name: data.get('lastName'),
             username: data.get('username'),
             email: data.get('email'),
             password: data.get('password'),
-            role: 'user',
         }
         console.log(context)
         dispatch(register(context))

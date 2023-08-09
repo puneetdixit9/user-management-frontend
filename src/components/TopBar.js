@@ -57,11 +57,16 @@ const TopBar = () => {
         setAnchorElUser(null)
     };
 
+    const handleLogout = () => {
+        dispatch(logoutAction())
+        handleCloseUserMenu()
+        navigate('/signin')
+    }
+
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <CloudUploadIcon></CloudUploadIcon>
                     <Box
                         sx={{
                             flexGrow: 1,
@@ -96,25 +101,12 @@ const TopBar = () => {
                                 display: { xs: 'block', md: 'none' },
                             }}
                         >
-                            {/* {UserSession.isAuthenticated() && (
-                                <MenuItem onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">
-                                        Home
-                                    </Typography>
-                                </MenuItem>
-                            )} */}
-
-                            {/* <MenuItem onClick={handleCloseNavMenu}>
-                                <Typography textAlign="center">
-                                    About
-                                </Typography>
-                            </MenuItem> */}
 
                             {UserSession.isAuthenticated() && (
                                 pages.map((page, index) => (
-                                <MenuItem key={index} onClick={()=> { navigate(page.route); handleCloseNavMenu}}>
-                                <Typography textAlign='center'>{page.label}</Typography>
-                                </MenuItem>
+                                    <MenuItem key={index} onClick={() => { navigate(page.route); handleCloseNavMenu }}>
+                                        <Typography textAlign='center'>{page.label}</Typography>
+                                    </MenuItem>
                                 ))
                             )}
                         </Menu>
@@ -171,15 +163,6 @@ const TopBar = () => {
 
                     {UserSession.isAuthenticated() ? (
                         <>
-                            {/* <IconButton
-                                size="large"
-                                aria-label="show 1 new notifications"
-                                color="inherit"
-                            >
-                                <Badge badgeContent={1} color="error">
-                                    <NotificationsIcon />
-                                </Badge>
-                            </IconButton> */}
                             <Box sx={{ flexGrow: 0 }}>
                                 <Tooltip title="Open settings">
                                     <IconButton
@@ -230,15 +213,7 @@ const TopBar = () => {
                                         Profile
                                     </MenuItem>
                                     <MenuItem
-                                        onClick={() => {
-                                            dispatch(logoutAction())
-                                            navigate('/signin')
-                                            dispatch(
-                                                setSelectedProjectsAction({})
-                                            )
-                                            dispatch(setProjectsObjectAction())
-                                            dispatch(setFilesEmptyAction())
-                                        }}
+                                        onClick={() => handleLogout()}
                                     >
                                         Logout
                                     </MenuItem>

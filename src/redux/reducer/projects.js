@@ -14,6 +14,8 @@ const initialState = {
     isAddingAccess: false,
     isRemovingAccess : false,
     
+    pendingUsers: [],
+
     message: '',
     isError: false,
 }
@@ -248,6 +250,47 @@ export const projectsReducer = createSlice({
                 isError: true,
             }
         },
+        fetchPendingUsers(state, action) {
+            return {
+                ...state,
+                message: ""
+            }
+        },
+        fetchPendingUsersSuccess(state, action) {
+            return {
+                ...state,
+                pendingUsers: action.payload,
+                isError: false,
+            }
+        },
+        fetchPendingUsersFailed(state, action) {
+            console.log(action.payload)
+            return {
+                ...state,
+                isError: true,
+            }
+        },
+        approveUser(state, action) {
+            return {
+                ...state,
+                message: ""
+            }
+        },
+        approveUserSuccess(state, action) {
+            return {
+                ...state,
+                isError: false,
+                message: "User Approved"
+            }
+        },
+        approveUserFailed(state, action) {
+            console.log(action.payload)
+            return {
+                ...state,
+                isError: true,
+                message: "Approve User Failed"
+            }
+        },
     },
 })
 
@@ -276,7 +319,13 @@ export const {
     addProjectAccessFailed,
     removeProjectAccess,
     removeProjectAccessSuccess,
-    removeProjectAccessFailed
+    removeProjectAccessFailed,
+    fetchPendingUsers,
+    fetchPendingUsersSuccess,
+    fetchPendingUsersFailed,
+    approveUser,
+    approveUserSuccess,
+    approveUserFailed,
 } = projectsReducer.actions
 
 export default projectsReducer.reducer

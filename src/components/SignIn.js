@@ -28,11 +28,11 @@ export default function SignIn() {
 
     const [snackbarState, setSnackbarState] = useState(false)
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (UserSession.isAuthenticated()) {
-            navigate('/')
+            navigate('/home')
         }
-    }, [UserSession.isAuthenticated()])
+    }, [authState.loginSuccess])
 
     useEffect(() => {
         setSnackbarState(true)
@@ -42,11 +42,10 @@ export default function SignIn() {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
         const context = {
-            username: data.get('email'),
+            email: data.get('email'),
             password: data.get('password'),
         }
         dispatch(login(context))
-        
     }
 
     return (

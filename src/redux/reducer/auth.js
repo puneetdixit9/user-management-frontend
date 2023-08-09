@@ -6,7 +6,8 @@ const initialState = {
     users: [],
     message : "",
     isError: false,
-    isLoadingUsers : false
+    isLoadingUsers : false,
+    loginSuccess: false,
 }
 
 export const authReducer = createSlice({
@@ -18,6 +19,7 @@ export const authReducer = createSlice({
                 ...state,
                 message: '',
                 isLoading: true,
+                loginSuccess: false,
             }
         },
         fetchLoginSuccess(state, action) {
@@ -25,6 +27,7 @@ export const authReducer = createSlice({
             return {
                 ...state,
                 isLoading: false,
+                loginSuccess: true,
             }
         },
         fetchLoginFailed(state, action) {
@@ -33,6 +36,7 @@ export const authReducer = createSlice({
                 message: action.payload.response.data['error'],
                 isLoading: false,
                 isError: true,
+                loginSuccess: false,
             }
         },
         fetchRegister(state, action) {
@@ -106,6 +110,7 @@ export const authReducer = createSlice({
         },
 
         logout(state, action) {
+            UserSession.removeUser()
             return {
                 ...state,
                 isLogout: true,

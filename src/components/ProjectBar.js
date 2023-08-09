@@ -8,7 +8,6 @@ import { getFilesForProject } from '../redux/actions/files'
 import { setSelectedProjectsAction } from '../redux/actions/projects'
 import { useAppSelector, useAppDispatch } from '../hooks/redux-hooks'
 import { useNavigate } from 'react-router-dom'
-import UploadFile from './UploadFile'
 
 export default function ProjectBar() {
     const dispatch = useAppDispatch()
@@ -89,17 +88,6 @@ export default function ProjectBar() {
             </Stack>
 
             <Stack direction="row" justifyContent="space-between">
-            <Typography sx={{ flex: '1 1 100%' }} variant="h5">
-                {!projectsState.selectedProject.projectName
-                    ? 'Please select a project'
-                    : projectsState.selectedProject.projectName + ' Files'}
-            </Typography>
-
-            {projectsState.selectedProject.projectName && (
-                <UploadFile
-                    Project={projectsState.selectedProject}
-                ></UploadFile>
-            )}
         </Stack>
         </div>
     )
