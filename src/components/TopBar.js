@@ -9,18 +9,15 @@ import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import NotificationsIcon from '@mui/icons-material/Notifications'
-import Badge from '@mui/material/Badge'
 import { useLocation } from 'react-router-dom'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Tooltip from '@mui/material/Tooltip'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import { setSelectedProjectsAction, setProjectsObjectAction } from '../redux/actions/projects'
-import { setFilesEmptyAction } from '../redux/actions/files'
 import { useAppDispatch } from '../hooks/redux-hooks'
 import { logoutAction } from '../redux/actions/auth'
+import { resetUserDataState } from '../redux/actions/projects';
+
 
 const pages = [
     {
@@ -58,6 +55,7 @@ const TopBar = () => {
     };
 
     const handleLogout = () => {
+        dispatch(resetUserDataState())
         dispatch(logoutAction())
         handleCloseUserMenu()
         navigate('/signin')

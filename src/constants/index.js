@@ -8,5 +8,6 @@ export const USERS_API = '/users'
 export const PROJECTS_API = '/projects'
 export const FILES_API = '/files'
 
-export const PENDING_USERS = '/auth/pending-users'
 export const APPROVE_USER = '/auth/approve-user'
+export const USERS = '/auth/users'
+export const USER = '/auth/user'

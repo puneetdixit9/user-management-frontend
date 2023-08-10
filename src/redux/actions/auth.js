@@ -15,7 +15,8 @@ import {
     fetchUsersFailed,
     logout,
     logoutSuccess,
-    logoutFailed
+    logoutFailed,
+    resetStateItems,
 } from '../reducer/auth'
 
 
@@ -55,6 +56,7 @@ export const register = payload => async dispatch => {
         const response = await apiClient.post(REGISTER_API, payload)
         return dispatch(fetchRegisterSuccess(response))
     } catch (err) {
+        console.log("Action register failed")
         return dispatch(fetchRegisterFailed(err))
     }
 }
@@ -91,4 +93,10 @@ export const logoutAction = () => async dispatch => {
     } catch (err) {
         return await dispatch(logoutFailed(err))
     }
+}
+
+
+export const resetState = () => async dispatch => {
+    console.log('Calling Action : resetState()')
+    await dispatch(resetStateItems())
 }

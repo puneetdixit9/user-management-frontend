@@ -10,33 +10,32 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { register } from '../redux/actions/auth'
-import { useAppDispatch } from '../hooks/redux-hooks'
+import { register, resetState } from '../redux/actions/auth'
+import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
 import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import SnackbarNotification from './SnackbarNotification'
 
-// function Copyright(props) {
-//     return (
-//         <Typography
-//             variant="body2"
-//             color="text.secondary"
-//             align="center"
-//             {...props}
-//         >
-//             {'Copyright © '}
-//             <Link color="inherit" href="https://mui.com/">
-//                 Your Website
-//             </Link>{' '}
-//             {new Date().getFullYear()}
-//             {'.'}
-//         </Typography>
-//     )
-// }
 
 const theme = createTheme()
 
 export default function SignUp() {
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
+
+    const authState = useAppSelector(state => state.authReducer)
+    const [snackbarState, setSnackbarState] = useState(false)
+
+
+    useEffect(() => {
+        return () => {
+            dispatch(resetState())
+        };
+    }, [])
+
+    useEffect(() => {
+        setSnackbarState(true)
+    }, [authState.message])
 
     const handleSubmit = event => {
         event.preventDefault()
@@ -147,6 +146,13 @@ export default function SignUp() {
                 </Box>
                 {/* <Copyright sx={{ mt: 5 }} /> */}
             </Container>
+            {snackbarState && authState.message && (
+                <SnackbarNotification
+                    message={authState.message}
+                    onClose={() => setSnackbarState(false)}
+                    severity={authState.isError ? 'error' : 'success'}
+                />
+            )}
         </ThemeProvider>
     )
 }

@@ -1,165 +1,68 @@
 import apiClient from '../../services/apiClient'
-import { PROJECTS_API, PENDING_USERS, APPROVE_USER } from '../../constants'
+import { APPROVE_USER, USERS, USER } from '../../constants'
 import {
-    setSelectedProject,
-    setProjectsObject,
-
-    fetchProjects,
-    fetchProjectsSuccess,
-    fetchProjectsFailed,
-    addProjects,
-    addProjectsSuccess,
-    addProjectsFailed,
-    deleteProjects,
-    deleteProjectsSuccess,
-    deleteProjectsFailed,
-    updateProjects,
-    updateProjectsSuccess,
-    updateProjectsFailed,
-
-    fetchProjectAccess,
-    fetchProjectAccessSuccess,
-    fetchProjectAccessFailed,
-    addProjectAccess,
-    addProjectAccessSuccess,
-    addProjectAccessFailed,
-    removeProjectAccess,
-    removeProjectAccessSuccess,
-    removeProjectAccessFailed,
     fetchPendingUsers,
     fetchPendingUsersSuccess,
     fetchPendingUsersFailed,
+    fetchActiveUsers,
+    fetchActiveUsersSuccess,
+    fetchActiveUsersFailed,
+    fetchInActiveUsers,
+    fetchInActiveUsersSuccess,
+    fetchInActiveUsersFailed,
     approveUser,
     approveUserSuccess,
     approveUserFailed,
+    updateUser,
+    updateUserSuccess,
+    updateUserFailed,
+    resetUserState,
 
 } from '../reducer/projects'
-
-
-// GET Projects Action => GET
-export const getProjects = () => async dispatch => {
-    console.log('Calling Action : getProjects()')
-    await dispatch(fetchProjects())
-    try {
-        const response = await apiClient.get(PROJECTS_API)
-        // console.log('Printing from project actions:', response.data)
-        return dispatch(fetchProjectsSuccess(response.data))
-    } catch (err) {
-        return dispatch(fetchProjectsFailed(err))
-    }
-}
-
-
-// SET SELECTED Project Action => GET
-export const setSelectedProjectsAction = project => async dispatch => {
-    console.log('Calling Action : setSelectedProjectsAction()')
-        return dispatch(setSelectedProject(project))
-}
-
-// SET Projects Objects Empty Action => GET
-export const setProjectsObjectAction = () => async dispatch => {
-    console.log('Calling Action : setProjectsObjectAction()')
-        return dispatch(setProjectsObject())
-}
-
-
-// ADD PROJECTS Action => POST
-export const addProjectAction = body => async dispatch => {
-    console.log('Calling Action : addProjectAction()')
-    await dispatch(addProjects())
-    try {
-        const response = await apiClient.post(PROJECTS_API, body)
-        console.log('Printing from addProjectAction():', response.data)
-        return dispatch(addProjectsSuccess(response.data))
-    } catch (err) {
-        return dispatch(addProjectsFailed(err))
-    }
-}
-
-// EDIT Projects Action => PUT
-export const editProjectsAction = (projectId, body) => async dispatch => {
-    console.log('Calling Action : editProjectsAction()')
-    await dispatch(updateProjects())
-    try {
-        const response = await apiClient.put(`${PROJECTS_API}/${projectId}`, body)
-        console.log('Printing from editProjectsAction:', response.data)
-        return dispatch(updateProjectsSuccess(response.data))
-    } catch (err) {
-        return dispatch(updateProjectsFailed(err))
-    }
-}
-
-
-// DELETE PROJECTS Action => DELETE
-export const deleteProjectAction = projectId => async dispatch => {
-    console.log('Calling Action : deleteProjectAction()')
-    await dispatch(deleteProjects())
-    try {
-        const response = await apiClient.delete(`${PROJECTS_API}/${projectId}`)
-        console.log('Printing from deleteProjectAction():', response.data)
-        return dispatch(deleteProjectsSuccess(response.data))
-    } catch (err) {
-        return dispatch(deleteProjectsFailed(err))
-    }
-}
-
-
-
-// GET Project Access Action => GET
-export const getProjectAccessAction = (projectId) => async dispatch => {
-    console.log('Calling Action : getProjectAccessAction()')
-    await dispatch(fetchProjectAccess())
-    try {
-        const response = await apiClient.get(`${PROJECTS_API}/${projectId}/access`)
-        // console.log('Printing from project actions:', response.data)
-        return dispatch(fetchProjectAccessSuccess(response.data))
-    } catch (err) {
-        return dispatch(fetchProjectAccessFailed(err))
-    }
-}
-
-// ADD Project Access Action => POST
-export const addProjectAccessAction = (projectId, body) => async dispatch => {
-    console.log('Calling Action : addProjectAccessAction()')
-    await dispatch(addProjectAccess())
-    try {
-        const response = await apiClient.post(`${PROJECTS_API}/${projectId}/access`, body)
-        // console.log('Printing from project actions:', response.data)
-        return dispatch(addProjectAccessSuccess(response.data))
-    } catch (err) {
-        return dispatch(addProjectAccessFailed(err))
-    }
-}
-
-// Remove Project Access Action => DELETE
-export const removeProjectAccessAction = (projectId, body) => async dispatch => {
-    console.log('Calling Action : removeProjectAccessAction()')
-    await dispatch(removeProjectAccess())
-    try {
-        const response = await apiClient.delete(
-            `${PROJECTS_API}/${projectId}/access`,
-            {
-                data: {
-                    ...body,
-                },
-            },
-        )
-        // console.log('Printing from project actions:', response.data)
-        return dispatch(removeProjectAccessSuccess(response.data))
-    } catch (err) {
-        return dispatch(removeProjectAccessFailed(err))
-    }
-}
 
 
 export const getPendingUsers = () => async dispatch => {
     console.log('Calling Action : getPendingUsers()')
     await dispatch(fetchPendingUsers())
     try {
-        const response = await apiClient.get(`${PENDING_USERS}`)
+        const response = await apiClient.post(`${USERS}`, {approved: false})
         return dispatch(fetchPendingUsersSuccess(response.data))
     } catch (err) {
         return dispatch(fetchPendingUsersFailed(err))
+    }
+}
+
+export const getActiveUsers = () => async dispatch => {
+    console.log('Calling Action : getActiveUsers()')
+    await dispatch(fetchActiveUsers())
+    try {
+        const response = await apiClient.post(`${USERS}`, {approved: true, is_active: true})
+        return dispatch(fetchActiveUsersSuccess(response.data))
+    } catch (err) {
+        return dispatch(fetchActiveUsersFailed(err))
+    }
+}
+
+export const getInActiveUsers = () => async dispatch => {
+    console.log('Calling Action : getInActiveUsers()')
+    await dispatch(fetchInActiveUsers())
+    try {
+        const response = await apiClient.post(`${USERS}`, {is_active: false})
+        return dispatch(fetchInActiveUsersSuccess(response.data))
+    } catch (err) {
+        return dispatch(fetchInActiveUsersFailed(err))
+    }
+}
+
+
+export const updateUserDetails = (userId, payload) => async dispatch => {
+    console.log('Calling Action : updateUserDetails()')
+    await dispatch(updateUser())
+    try {
+        const response = await apiClient.put(`${USER}/${userId}`, payload)
+        return dispatch(updateUserSuccess(response.data))
+    } catch (err) {
+        return dispatch(updateUserFailed(err))
     }
 }
 
@@ -172,4 +75,9 @@ export const approvePendingUser = (userId, payload) => async dispatch => {
     } catch (err) {
         return dispatch(approveUserFailed(err))
     }
+}
+
+export const resetUserDataState = () => async dispatch => {
+    console.log('Calling Action : resetUserDataState()')
+    await dispatch(resetUserState())
 }

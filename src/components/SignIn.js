@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
-import { login } from '../redux/actions/auth'
+import { login, resetState } from '../redux/actions/auth'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useNavigate } from 'react-router-dom'
 import UserSession from '../services/auth'
@@ -33,6 +33,12 @@ export default function SignIn() {
             navigate('/home')
         }
     }, [authState.loginSuccess])
+
+    useEffect(() => {
+        return () => {
+            dispatch(resetState())
+        };
+    }, [])
 
     useEffect(() => {
         setSnackbarState(true)

@@ -42,6 +42,7 @@ export const authReducer = createSlice({
         fetchRegister(state, action) {
             return {
                 ...state,
+                message: '',
                 isLoading: true,
             }
         },
@@ -50,12 +51,15 @@ export const authReducer = createSlice({
                 ...state,
                 user: action.payload.data,
                 isLoading: false,
+                message: "User Register Successfully"
             }
         },
         fetchRegisterFailed(state, action) {
             return {
                 ...state,
                 isLoading: false,
+                message: action.payload.response.data['error'],
+                isError: true,
             }
         },
         passwordReset(state, action) {
@@ -134,6 +138,13 @@ export const authReducer = createSlice({
                 isError: true,
             }
         },
+        resetStateItems(state, action) {
+            return {
+                ...state,
+                message: '',
+                isError: false,
+            }
+        },
     },
 })
 
@@ -152,7 +163,8 @@ export const {
     fetchUsersFailed,
     logout,
     logoutSuccess,
-    logoutFailed
+    logoutFailed,
+    resetStateItems,
 } = authReducer.actions
 
 export default authReducer.reducer

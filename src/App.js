@@ -7,7 +7,6 @@ import Home from './components/Home'
 import UserSession from './services/auth'
 import About from './components/About'
 import Profile from './components/Profile'
-import ProjectSettings from './components/ProjectSettings'
 
 
 function App() {
@@ -48,10 +47,6 @@ function App() {
 
                     <Route path="/home" element={<Home />}></Route>
                     <Route path="/signin" element={<SignIn />}></Route>
-                    <Route
-                        path="/settings"
-                        element={<ProjectSettings />}
-                    ></Route>
                     <Route path="/signup" element={<SignUp />}></Route>
                     <Route path="/about" element={<About />}></Route>
                     <Route path="/profile" element={<Profile />}></Route>
