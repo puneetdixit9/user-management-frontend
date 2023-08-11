@@ -14,23 +14,14 @@ import {
 import DoneIcon from '@mui/icons-material/Done';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom'
 
-export default function PendingUsersTable(props) {
+export default function ActiveUsersTable(props) {
+    const { Users, handlerInActiveUser } = props;
     const [searchQuery, setSearchQuery] = useState('');
     const [isInputFocused, setIsInputFocused] = useState(false);
-    const { pendingUsers, approveOrReject } = props;
-
-    // const timeFormatter = (dateTimeString) => {
-    //     const dateParts = dateTimeString.split(' ');
-    //     const timeParts = dateParts[4].split(':');
-    //     const hours = parseInt(timeParts[0], 10);
-    //     const minutes = parseInt(timeParts[1], 10);
-    //     const amOrPm = hours >= 12 ? 'PM' : 'AM';
-    //     const formattedHours = (hours % 12) || 12;
-
-    //     return `${formattedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${amOrPm}`;
-    // };
-    const filteredUsers = pendingUsers.filter(user =>
+    
+    const filteredUsers = Users.filter(user =>
         user.first_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.last_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -54,11 +45,14 @@ export default function PendingUsersTable(props) {
                 <TableHead>
                     <TableRow style={{ position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#fff', fontWeight: "bold" }}>
                         <TableCell>User ID</TableCell>
-                        <TableCell align="left">First Name</TableCell>
+                        <TableCell align="center">Email</TableCell>
+                        <TableCell align="center">First Name</TableCell>
                         <TableCell align="center">Last Name</TableCell>
                         <TableCell align="center">User Name</TableCell>
-                        <TableCell align="center">Email</TableCell>
-                        <TableCell align="center">Requested On</TableCell>
+                        <TableCell align="center">Deptartment</TableCell>
+                        <TableCell align="center">Role</TableCell>
+                        <TableCell align="center">Registered On</TableCell>
+                        <TableCell align="center">Approved By</TableCell>
                         <TableCell align="center">Action</TableCell>
                     </TableRow>
                 </TableHead>
@@ -71,29 +65,27 @@ export default function PendingUsersTable(props) {
                             <TableCell component="th" scope="row">
                                 {row.user_id}
                             </TableCell>
-                            <TableCell align="left">{row.first_name}</TableCell>
+                            <TableCell align="center">
+                                <Link
+                                    to={`/profile/${row.user_id}`}
+                                > {row.email} </Link>
+                            </TableCell>
+                            <TableCell align="center">{row.first_name}</TableCell>
                             <TableCell align="center">{row.last_name}</TableCell>
                             <TableCell align="center">{row.username}</TableCell>
-                            <TableCell align="center">{row.email}</TableCell>
+                            <TableCell align="center">{row.dept_id ? row.dept_id : "-"}</TableCell>
+                            <TableCell align="center">{row.role_id}</TableCell>
                             <TableCell align="center">{row.created_on}</TableCell>
+                            <TableCell align="center">{row.approved_by}</TableCell>
                             <TableCell align="center">
                                 <Button
                                     variant="contained"
-                                    color={row.status === "prepared" ? "secondary" : "success"}
+                                    color="success"
                                     sx={{ width: "110px", fontSize: "1", mr: 1 }}
-                                    onClick={() => approveOrReject(row.user_id)}
+                                    onClick={() => handlerInActiveUser(row.user_id, false)}
                                 >
-                                    <DoneIcon />
-                                    Approve
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    sx={{ width: "110px", fontSize: "1" }}
-                                    // onClick={() => approveOrReject(row.user_id)}
-                                >
-                                    <CancelOutlinedIcon />
-                                    Reject
+                                    {/* <DoneIcon /> */}
+                                    Deactivate
                                 </Button>
                             </TableCell>
                         </TableRow>
@@ -104,7 +96,7 @@ export default function PendingUsersTable(props) {
     );
 }
 
-PendingUsersTable.propTypes = {
-    pendingUsers: PropTypes.array,
-    approveOrReject: PropTypes.func
+ActiveUsersTable.propTypes = {
+    Users: PropTypes.array,
+    handlerInActiveUser: PropTypes.func
 };

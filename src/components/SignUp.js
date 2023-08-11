@@ -74,6 +74,7 @@ export default function SignUp() {
                         noValidate
                         onSubmit={handleSubmit}
                         sx={{ mt: 3 }}
+                        id="signup-form"
                     >
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
@@ -147,11 +148,16 @@ export default function SignUp() {
                 {/* <Copyright sx={{ mt: 5 }} /> */}
             </Container>
             {snackbarState && authState.message && (
-                <SnackbarNotification
-                    message={authState.message}
-                    onClose={() => setSnackbarState(false)}
-                    severity={authState.isError ? 'error' : 'success'}
-                />
+                <>
+                    {!authState.isError && (
+                        document.getElementById('signup-form').reset()
+                    )}
+                    <SnackbarNotification
+                        message={authState.message}
+                        onClose={() => setSnackbarState(false)}
+                        severity={authState.isError ? 'error' : 'success'}
+                    />
+                </>
             )}
         </ThemeProvider>
     )

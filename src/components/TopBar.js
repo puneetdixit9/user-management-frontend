@@ -57,6 +57,7 @@ const TopBar = () => {
     const handleLogout = () => {
         dispatch(resetUserDataState())
         dispatch(logoutAction())
+        localStorage.removeItem("selectedTab")
         handleCloseUserMenu()
         navigate('/signin')
     }

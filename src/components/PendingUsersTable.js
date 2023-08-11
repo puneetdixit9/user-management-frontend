@@ -11,16 +11,17 @@ import {
     TextField,
     Grid,
 } from '@mui/material';
+import { Link } from 'react-router-dom'
 import DoneIcon from '@mui/icons-material/Done';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import PropTypes from 'prop-types';
 
-export default function UsersTable(props) {
-    const { Users, handlerInActiveUser } = props;
+export default function PendingUsersTable(props) {
     const [searchQuery, setSearchQuery] = useState('');
     const [isInputFocused, setIsInputFocused] = useState(false);
-    
-    const filteredUsers = Users.filter(user =>
+    const { pendingUsers, approveOrReject } = props;
+
+    const filteredUsers = pendingUsers.filter(user =>
         user.first_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.last_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -36,7 +37,7 @@ export default function UsersTable(props) {
                 margin="normal"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                sx={{ml: 1, mr: -6,  width: "550px"}}
+                sx={{ ml: 1, mr: -6, width: "550px" }}
                 onFocus={() => setIsInputFocused(true)}
                 onBlur={() => setIsInputFocused(false)}
             />
@@ -44,15 +45,12 @@ export default function UsersTable(props) {
                 <TableHead>
                     <TableRow style={{ position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#fff', fontWeight: "bold" }}>
                         <TableCell>User ID</TableCell>
+                        <TableCell align="center">Email</TableCell>
                         <TableCell align="center">First Name</TableCell>
                         <TableCell align="center">Last Name</TableCell>
-                        <TableCell align="center">User Name</TableCell>
                         <TableCell align="center">Email</TableCell>
-                        <TableCell align="center">Deptartment</TableCell>
-                        <TableCell align="center">Role</TableCell>
-                        <TableCell align="center">Registered On</TableCell>
-                        <TableCell align="center">Approved By</TableCell>
-                        <TableCell align="center">Approve</TableCell>
+                        <TableCell align="center">Requested On</TableCell>
+                        <TableCell align="center">Action</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -64,23 +62,33 @@ export default function UsersTable(props) {
                             <TableCell component="th" scope="row">
                                 {row.user_id}
                             </TableCell>
+                            <TableCell align="center">
+                                <Link
+                                    to={`/profile/${row.user_id}`}
+                                > {row.email} </Link>
+                            </TableCell>
                             <TableCell align="center">{row.first_name}</TableCell>
                             <TableCell align="center">{row.last_name}</TableCell>
                             <TableCell align="center">{row.username}</TableCell>
-                            <TableCell align="center">{row.email}</TableCell>
-                            <TableCell align="center">{row.dept_id ? row.dept_id : "-"}</TableCell>
-                            <TableCell align="center">{row.role_id}</TableCell>
                             <TableCell align="center">{row.created_on}</TableCell>
-                            <TableCell align="center">{row.approved_by}</TableCell>
                             <TableCell align="center">
                                 <Button
                                     variant="contained"
-                                    color="success"
+                                    color={row.status === "prepared" ? "secondary" : "success"}
                                     sx={{ width: "110px", fontSize: "1", mr: 1 }}
-                                    onClick={() => handlerInActiveUser(row.user_id, false)}
+                                    onClick={() => approveOrReject(row.user_id)}
                                 >
-                                    {/* <DoneIcon /> */}
-                                    Deactivate
+                                    <DoneIcon />
+                                    Approve
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    sx={{ width: "110px", fontSize: "1" }}
+                                // onClick={() => approveOrReject(row.user_id)}
+                                >
+                                    <CancelOutlinedIcon />
+                                    Reject
                                 </Button>
                             </TableCell>
                         </TableRow>
@@ -91,7 +99,7 @@ export default function UsersTable(props) {
     );
 }
 
-UsersTable.propTypes = {
-    Users: PropTypes.array,
-    handlerInActiveUser: PropTypes.func
+PendingUsersTable.propTypes = {
+    pendingUsers: PropTypes.array,
+    approveOrReject: PropTypes.func
 };

@@ -3,19 +3,11 @@ import { Container, Grid, Button } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks';
 import SnackbarNotification from './SnackbarNotification';
 import { getPendingUsers, getActiveUsers, getInActiveUsers, updateUserDetails } from '../redux/actions/projects';
-import PendingUsersTable from './PendingUsers';
-import UsersTable from './UsersTable';
+import PendingUsersTable from './PendingUsersTable';
+import ActiveUsersTable from './ActiveUsersTable';
 import InactiveUsersTable from './InactiveUsersTable';
-import { styled } from '@mui/system';
 import UserSession from '../services/auth'
 
-
-// const StyledButton = styled(Button)(({ theme, isActive }) => ({
-//     margin: theme.spacing(1),
-//     backgroundColor: isActive ? theme.palette.primary?.main : 'inherit',
-//     color: isActive ? 'blue' : 'inherit',
-//     variant:"contained"
-// }));
 
 const Home = () => {
     const dispatch = useAppDispatch();
@@ -26,7 +18,7 @@ const Home = () => {
     const [activeUsers, setActiveUsers] = useState([])
     const [inActiveUsers, setInActiveUsers] = useState([])
 
-    const [activeTable, setActiveTable] = useState('pendingUsers');
+    const [activeTable, setActiveTable] = useState(localStorage.getItem('selectedTab') || "pendingUsers");
 
     useEffect(() => {
         if (UserSession.isAuthenticated()) {
@@ -56,6 +48,11 @@ const Home = () => {
         ));
     };
 
+    const handleTabSwitch = (selectedTab) => {
+        setActiveTable(selectedTab)
+        localStorage.setItem('selectedTab', selectedTab)
+    }
+
 
     const handleActiveInactiveUser = (userId, isActive) => {
         const payload = {
@@ -78,7 +75,7 @@ const Home = () => {
                 );
             case 'activeUsers':
                 return (
-                    <UsersTable Users={activeUsers} handlerInActiveUser={handleActiveInactiveUser} />
+                    <ActiveUsersTable Users={activeUsers} handlerInActiveUser={handleActiveInactiveUser} />
                 );
             case 'inActiveUsers':
                 return (
@@ -94,7 +91,7 @@ const Home = () => {
             <Grid container spacing={2}>
                 <Grid item xs={12} sm={12}>
                     <Button
-                        onClick={() => setActiveTable('pendingUsers')}
+                        onClick={() => handleTabSwitch('pendingUsers')}
                         variant="contained"
                         sx={{ width: "250px", fontSize: "1", mr: 1, mt: 1 }}
                         color={activeTable === 'pendingUsers' ? 'primary' : 'inherit'}
@@ -105,7 +102,7 @@ const Home = () => {
                         variant="contained"
                         sx={{ width: "250px", fontSize: "1", mr: 1, mt: 1 }}
                         color={activeTable === 'activeUsers' ? 'primary' : 'inherit'}
-                        onClick={() => setActiveTable('activeUsers')}
+                        onClick={() => handleTabSwitch('activeUsers')}
                     >
                         Active Users
                     </Button>
@@ -113,7 +110,7 @@ const Home = () => {
                         variant="contained"
                         sx={{ width: "250px", fontSize: "1", mr: 1, mt: 1 }}
                         color={activeTable === 'inActiveUsers' ? 'primary' : 'inherit'}
-                        onClick={() => setActiveTable('inActiveUsers')}
+                        onClick={() => handleTabSwitch('inActiveUsers')}
                     >
                         Inactive Users
                     </Button>

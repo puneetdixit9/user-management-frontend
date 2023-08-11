@@ -44,6 +44,7 @@ export const authReducer = createSlice({
                 ...state,
                 message: '',
                 isLoading: true,
+                isError: false,
             }
         },
         fetchRegisterSuccess(state, action) {
@@ -51,7 +52,8 @@ export const authReducer = createSlice({
                 ...state,
                 user: action.payload.data,
                 isLoading: false,
-                message: "User Register Successfully"
+                message: "User Register Successfully",
+                isError: false,
             }
         },
         fetchRegisterFailed(state, action) {
