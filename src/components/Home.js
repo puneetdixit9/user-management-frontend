@@ -7,6 +7,7 @@ import PendingUsersTable from './PendingUsersTable';
 import ActiveUsersTable from './ActiveUsersTable';
 import InactiveUsersTable from './InactiveUsersTable';
 import UserSession from '../services/auth'
+import { useNavigate } from 'react-router-dom'
 
 
 const Home = () => {
@@ -17,6 +18,7 @@ const Home = () => {
     const [pendingUsers, setPendingUsers] = useState([])
     const [activeUsers, setActiveUsers] = useState([])
     const [inActiveUsers, setInActiveUsers] = useState([])
+    const navigate = useNavigate()
 
     const [activeTable, setActiveTable] = useState(localStorage.getItem('selectedTab') || "pendingUsers");
 
@@ -26,6 +28,8 @@ const Home = () => {
             dispatch(getPendingUsers())
             dispatch(getActiveUsers())
             dispatch(getInActiveUsers())
+        } else {
+            navigate("/signin")
         }
 
     }, [])
