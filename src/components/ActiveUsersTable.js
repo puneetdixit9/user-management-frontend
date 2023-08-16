@@ -20,7 +20,7 @@ export default function ActiveUsersTable(props) {
     const { Users, handlerInActiveUser } = props;
     const [searchQuery, setSearchQuery] = useState('');
     const [isInputFocused, setIsInputFocused] = useState(false);
-    
+
     const filteredUsers = Users.filter(user =>
         user.first_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.last_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -37,7 +37,7 @@ export default function ActiveUsersTable(props) {
                 margin="normal"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                sx={{ml: 1, mr: -6,  width: "550px"}}
+                sx={{ ml: 1, mr: -6, width: "550px" }}
                 onFocus={() => setIsInputFocused(true)}
                 onBlur={() => setIsInputFocused(false)}
             />
@@ -50,6 +50,7 @@ export default function ActiveUsersTable(props) {
                         <TableCell align="center">Last Name</TableCell>
                         <TableCell align="center">User Name</TableCell>
                         <TableCell align="center">Deptartment</TableCell>
+                        <TableCell align="center">Sub Function</TableCell>
                         <TableCell align="center">Role</TableCell>
                         <TableCell align="center">Registered On</TableCell>
                         <TableCell align="center">Approved By</TableCell>
@@ -73,8 +74,9 @@ export default function ActiveUsersTable(props) {
                             <TableCell align="center">{row.first_name}</TableCell>
                             <TableCell align="center">{row.last_name}</TableCell>
                             <TableCell align="center">{row.username}</TableCell>
-                            <TableCell align="center">{row.dept_id ? row.dept_id : "-"}</TableCell>
-                            <TableCell align="center">{row.role_id}</TableCell>
+                            <TableCell align="center">{row.dept_name ? row.dept_name : "-"}</TableCell>
+                            <TableCell align="center">{row.function_name ? row.function_name : "-"}</TableCell>
+                            <TableCell align="center">{row.role_name ? row.role_name : "-"}</TableCell>
                             <TableCell align="center">{row.created_on}</TableCell>
                             <TableCell align="center">{row.approved_by}</TableCell>
                             <TableCell align="center">

@@ -48,7 +48,12 @@ export default function PendingUsersTable(props) {
                         <TableCell align="center">Email</TableCell>
                         <TableCell align="center">First Name</TableCell>
                         <TableCell align="center">Last Name</TableCell>
-                        <TableCell align="center">Email</TableCell>
+                        <TableCell align="center">User Name</TableCell>
+                        <TableCell align="center">Department</TableCell>
+                        <TableCell align="center">Sub Function</TableCell>
+                        <TableCell align="center">Role</TableCell>
+                        <TableCell align="center">Emp. Code</TableCell>
+                        <TableCell align="center">Manager</TableCell>
                         <TableCell align="center">Requested On</TableCell>
                         <TableCell align="center">Action</TableCell>
                     </TableRow>
@@ -70,12 +75,17 @@ export default function PendingUsersTable(props) {
                             <TableCell align="center">{row.first_name}</TableCell>
                             <TableCell align="center">{row.last_name}</TableCell>
                             <TableCell align="center">{row.username}</TableCell>
+                            <TableCell align="center">{row.dept_name}</TableCell>
+                            <TableCell align="center">{row.function_name}</TableCell>
+                            <TableCell align="center">{row.role_name}</TableCell>
+                            <TableCell align="center">{row.employee_code}</TableCell>
+                            <TableCell align="center">{row.manager_name}</TableCell>
                             <TableCell align="center">{row.created_on}</TableCell>
                             <TableCell align="center">
                                 <Button
                                     variant="contained"
                                     color={row.status === "prepared" ? "secondary" : "success"}
-                                    sx={{ width: "110px", fontSize: "1", mr: 1 }}
+                                    sx={{ width: "110px", fontSize: "1", mr: 1, mb: 1 }}
                                     onClick={() => approveOrReject(row.user_id)}
                                 >
                                     <DoneIcon />

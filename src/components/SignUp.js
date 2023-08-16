@@ -6,15 +6,18 @@ import TextField from '@mui/material/TextField'
 import { Link } from 'react-router-dom'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
+import Autocomplete from '@mui/material/Autocomplete';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { register, resetState } from '../redux/actions/auth'
+import { getSubFunctions, getRoles } from '../redux/actions/projects'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import SnackbarNotification from './SnackbarNotification'
+import { setRef } from '@mui/material'
 
 
 const theme = createTheme()
@@ -24,18 +27,45 @@ export default function SignUp() {
     const dispatch = useAppDispatch()
 
     const authState = useAppSelector(state => state.authReducer)
+    const projectsState = useAppSelector(state => state.projectsReducer);
     const [snackbarState, setSnackbarState] = useState(false)
+    const [subFunctionsData, setSubFunctionsData] = useState([])
+    const [roles, setRoles] = useState([])
+    const [selectedDepartment, setSelectedDepartment] = useState(null);
+    const [filteredSubFunctions, setFilteredSubFunctions] = useState([]);
+
 
 
     useEffect(() => {
+        dispatch(getSubFunctions())
+        dispatch(getRoles())
         return () => {
             dispatch(resetState())
         };
     }, [])
 
+
+    useEffect(() => {
+        setSubFunctionsData(projectsState.subFunctions)
+        setRoles(projectsState.roles)
+        setFilteredSubFunctions(projectsState.subFunctions)
+    }, [projectsState.subFunctions, projectsState.roles])
+
+
     useEffect(() => {
         setSnackbarState(true)
     }, [authState.message])
+
+
+    const handleDepartmentChange = (event, newValue) => {
+        if (newValue) {
+            const filteredSubs = subFunctionsData.filter((subFunction) => subFunction.dept_name === newValue);
+            setFilteredSubFunctions(filteredSubs);
+        } else {
+            setFilteredSubFunctions(subFunctionsData);
+        }
+    };
+
 
     const handleSubmit = event => {
         event.preventDefault()
@@ -46,6 +76,11 @@ export default function SignUp() {
             username: data.get('username'),
             email: data.get('email'),
             password: data.get('password'),
+            employee_code: data.get('employeeCode'),
+            manager_name: data.get('managerName'),
+            dept_id: subFunctionsData.find(subfunction => subfunction.dept_name === data.get('department'))?.dept_id,
+            func_id: subFunctionsData.find(subfunction => subfunction.sub_function_name === data.get('subFunction'))?.func_id,
+            role_id: roles.find(role => role.role_name === data.get('role'))?.role_id,
         }
         console.log(context)
         dispatch(register(context))
@@ -53,7 +88,7 @@ export default function SignUp() {
 
     return (
         <ThemeProvider theme={theme}>
-            <Container component="main" maxWidth="xs">
+            <Container component="main" maxWidth="sm">
                 <CssBaseline />
                 <Box
                     sx={{
@@ -67,7 +102,7 @@ export default function SignUp() {
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Sign up
+                        New User Sign Up
                     </Typography>
                     <Box
                         component="form"
@@ -79,6 +114,7 @@ export default function SignUp() {
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
+                                    required
                                     autoComplete="given-name"
                                     name="firstName"
                                     fullWidth
@@ -96,7 +132,7 @@ export default function SignUp() {
                                     autoComplete="family-name"
                                 />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid item xs={12} sm={6}>
                                 <TextField
                                     required
                                     fullWidth
@@ -106,7 +142,7 @@ export default function SignUp() {
                                     autoComplete="username"
                                 />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid item xs={12} sm={6}>
                                 <TextField
                                     required
                                     fullWidth
@@ -116,7 +152,7 @@ export default function SignUp() {
                                     autoComplete="email"
                                 />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid item xs={12} sm={6}>
                                 <TextField
                                     required
                                     fullWidth
@@ -125,6 +161,69 @@ export default function SignUp() {
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    name="employeeCode"
+                                    label="Employee Code"
+                                    id="employeeCode"
+
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    name="managerName"
+                                    label="Manager/L1 Name"
+                                    id="managerName"
+
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Autocomplete
+                                    id="department"
+                                    options={Array.from(new Set(subFunctionsData.map((option) => option.dept_name)))} // Make unique
+                                    getOptionLabel={(option) => option}
+                                    onChange={handleDepartmentChange}
+                                    renderInput={(params) => (
+                                        <TextField {...params} required fullWidth name="department" label="Department" />
+                                    )}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Autocomplete
+                                    id="subFunction"
+                                    options={filteredSubFunctions}
+                                    getOptionLabel={(option) => option.sub_function_name}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            required
+                                            fullWidth
+                                            name="subFunction"
+                                            label="Sub Function"
+                                        />
+                                    )}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Autocomplete
+                                    id="role"
+                                    options={roles}
+                                    getOptionLabel={(option) => option.role_name}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            required
+                                            fullWidth
+                                            name="role"
+                                            label="Role"
+                                        />
+                                    )}
                                 />
                             </Grid>
                         </Grid>

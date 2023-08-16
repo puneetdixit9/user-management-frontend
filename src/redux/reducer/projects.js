@@ -5,7 +5,8 @@ const initialState = {
     pendingUsers: [],
     activeUsers: [],
     inActiveUsers: [],
-
+    subFunctions: [],
+    roles: [],
     message: '',
     isError: false,
 }
@@ -115,6 +116,46 @@ export const projectsReducer = createSlice({
                 message: "Update User Failed"
             }
         },
+        fetchSubFunctions(state, action) {
+            return {
+                ...state,
+                message: ""
+            }
+        },
+        fetchSubFunctionsSuccess(state, action) {
+            return {
+                ...state,
+                isError: false,
+                subFunctions: action.payload
+            }
+        },
+        fetchSubFunctionsFailed(state, action) {
+            return {
+                ...state,
+                isError: true,
+                message: "Update User Failed"
+            }
+        },
+        fetchRoles(state, action) {
+            return {
+                ...state,
+                message: ""
+            }
+        },
+        fetchRolesSuccess(state, action) {
+            return {
+                ...state,
+                isError: false,
+                roles: action.payload
+            }
+        },
+        fetchRolesFailed(state, action) {
+            return {
+                ...state,
+                isError: true,
+                message: "Update User Failed"
+            }
+        },
         resetUserState(state, action) {
             return {
                 ...state,
@@ -145,6 +186,12 @@ export const {
     updateUserSuccess,
     updateUserFailed,
     resetUserState,
+    fetchSubFunctions,
+    fetchSubFunctionsSuccess,
+    fetchSubFunctionsFailed,
+    fetchRoles,
+    fetchRolesSuccess,
+    fetchRolesFailed,
 } = projectsReducer.actions
 
 export default projectsReducer.reducer

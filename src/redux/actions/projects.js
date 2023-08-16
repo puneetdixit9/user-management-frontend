@@ -1,5 +1,5 @@
 import apiClient from '../../services/apiClient'
-import { APPROVE_USER, USERS, USER } from '../../constants'
+import { APPROVE_USER, USERS, USER, SUB_FUNCTIONS, ROLES } from '../../constants'
 import {
     fetchPendingUsers,
     fetchPendingUsersSuccess,
@@ -17,6 +17,12 @@ import {
     updateUserSuccess,
     updateUserFailed,
     resetUserState,
+    fetchSubFunctions,
+    fetchSubFunctionsSuccess,
+    fetchSubFunctionsFailed,
+    fetchRoles,
+    fetchRolesSuccess,
+    fetchRolesFailed,
 
 } from '../reducer/projects'
 
@@ -80,4 +86,27 @@ export const approvePendingUser = (userId, payload) => async dispatch => {
 export const resetUserDataState = () => async dispatch => {
     console.log('Calling Action : resetUserDataState()')
     await dispatch(resetUserState())
+}
+
+
+export const getSubFunctions = () => async dispatch => {
+    console.log('Calling Action : getSubFunctions()')
+    await dispatch(fetchSubFunctions())
+    try {
+        const response = await apiClient.get(`${SUB_FUNCTIONS}`)
+        return dispatch(fetchSubFunctionsSuccess(response.data))
+    } catch (err) {
+        return dispatch(fetchSubFunctionsFailed(err))
+    }
+}
+
+export const getRoles = () => async dispatch => {
+    console.log('Calling Action : getSubFunctions()')
+    await dispatch(fetchRoles())
+    try {
+        const response = await apiClient.get(`${ROLES}`)
+        return dispatch(fetchRolesSuccess(response.data))
+    } catch (err) {
+        return dispatch(fetchRolesFailed(err))
+    }
 }
