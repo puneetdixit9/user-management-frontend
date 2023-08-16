@@ -23,6 +23,9 @@ import {
     fetchRoles,
     fetchRolesSuccess,
     fetchRolesFailed,
+    fetchUserProfile,
+    fetchUserProfileSuccess,
+    fetchUserProfileFailed,
 
 } from '../reducer/projects'
 
@@ -108,5 +111,16 @@ export const getRoles = () => async dispatch => {
         return dispatch(fetchRolesSuccess(response.data))
     } catch (err) {
         return dispatch(fetchRolesFailed(err))
+    }
+}
+
+export const getUserProfile = (userId) => async dispatch => {
+    console.log('Calling Action : getSubFunctions()')
+    await dispatch(fetchUserProfile())
+    try {
+        const response = await apiClient.get(`${USER}/${userId}`)
+        return dispatch(fetchUserProfileSuccess(response.data))
+    } catch (err) {
+        return dispatch(fetchUserProfileFailed(err))
     }
 }

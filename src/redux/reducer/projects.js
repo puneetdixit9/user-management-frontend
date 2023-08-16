@@ -9,6 +9,7 @@ const initialState = {
     roles: [],
     message: '',
     isError: false,
+    userProfileData: {},
 }
 
 export const projectsReducer = createSlice({
@@ -156,6 +157,26 @@ export const projectsReducer = createSlice({
                 message: "Update User Failed"
             }
         },
+        fetchUserProfile(state, action) {
+            return {
+                ...state,
+                message: ""
+            }
+        },
+        fetchUserProfileSuccess(state, action) {
+            return {
+                ...state,
+                isError: false,
+                userProfileData: action.payload
+            }
+        },
+        fetchUserProfileFailed(state, action) {
+            return {
+                ...state,
+                isError: true,
+                message: "Error in fetching user profile."
+            }
+        },
         resetUserState(state, action) {
             return {
                 ...state,
@@ -192,6 +213,9 @@ export const {
     fetchRoles,
     fetchRolesSuccess,
     fetchRolesFailed,
+    fetchUserProfile,
+    fetchUserProfileSuccess,
+    fetchUserProfileFailed,
 } = projectsReducer.actions
 
 export default projectsReducer.reducer
