@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-    isLoading: false,    
+    isLoading: false,
     pendingUsers: [],
     activeUsers: [],
     inActiveUsers: [],
@@ -10,6 +10,8 @@ const initialState = {
     message: '',
     isError: false,
     userProfileData: {},
+    permissions: [],
+    userPermissions: []
 }
 
 export const projectsReducer = createSlice({
@@ -177,6 +179,46 @@ export const projectsReducer = createSlice({
                 message: "Error in fetching user profile."
             }
         },
+        fetchPermissions(state, action) {
+            return {
+                ...state,
+                message: ""
+            }
+        },
+        fetchPermissionsSuccess(state, action) {
+            return {
+                ...state,
+                isError: false,
+                permissions: action.payload
+            }
+        },
+        fetchPermissionsFailed(state, action) {
+            return {
+                ...state,
+                isError: true,
+                message: "Error in fetching user profile."
+            }
+        },
+        fetchUserPermissions(state, action) {
+            return {
+                ...state,
+                message: ""
+            }
+        },
+        fetchUserPermissionsSuccess(state, action) {
+            return {
+                ...state,
+                isError: false,
+                userPermissions: action.payload
+            }
+        },
+        fetchUserPermissionsFailed(state, action) {
+            return {
+                ...state,
+                isError: true,
+                message: "Error in fetching user profile."
+            }
+        },
         resetUserState(state, action) {
             return {
                 ...state,
@@ -216,6 +258,12 @@ export const {
     fetchUserProfile,
     fetchUserProfileSuccess,
     fetchUserProfileFailed,
+    fetchPermissions,
+    fetchPermissionsSuccess,
+    fetchPermissionsFailed,
+    fetchUserPermissions,
+    fetchUserPermissionsSuccess,
+    fetchUserPermissionsFailed,
 } = projectsReducer.actions
 
 export default projectsReducer.reducer
