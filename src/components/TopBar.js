@@ -133,7 +133,7 @@ const TopBar = () => {
                             display: { xs: 'none', md: 'flex' },
                         }}
                     >
-                        {UserSession.isAuthenticated() && (
+                        {(UserSession.isAuthenticated() && (UserSession.isPageAllowed("/") || UserSession.isAdmin())) && (
                             <Button
                                 href="/"
                                 key="Home"

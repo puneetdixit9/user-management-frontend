@@ -34,9 +34,7 @@ export default function SignIn() {
             if (!UserSession.getUserPermissions()) {
                 dispatch(getAllowedScreens())
             } else {
-                const allowedScreens = UserSession.getUserPermissions()
-                const screens = allowedScreens?.filter(permission => permission.application === "ump").map(permission => permission.permission)
-                if (UserSession.isAdmin() || screens.includes("/")) {
+                if (UserSession.isAdmin() || UserSession.isPageAllowed("/")) {
                     navigate("/")
                 } else {
                     navigate("/profile", {state: {userId: UserSession.getUserId()}})

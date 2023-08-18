@@ -31,11 +31,11 @@ const removeUser = () => {
 }
 
 const getUserId = () => {
-    return JSON.parse(localStorage.getItem('user')).userId
+    return JSON.parse(localStorage.getItem('user'))?.userId
 }
 
 const getUserName = () => {
-    return JSON.parse(localStorage.getItem('user')).username
+    return JSON.parse(localStorage.getItem('user'))?.username
 }
 
 const getUserRole = () => {
@@ -58,6 +58,10 @@ const getUserPermissions = () => {
     return JSON.parse(localStorage.getItem('userPermissions'))
 }
 
+const isPageAllowed = (path) => {
+    return getUserPermissions()?.filter(permission => permission.application === "ump").find(permission => permission.permission === path) !== undefined
+}
+
 const removeUserPermissions = () => {
     localStorage.removeItem('userPermissions')
 }
@@ -78,6 +82,7 @@ const UserSession = {
     setUserPermissions,
     getUserPermissions,
     removeUserPermissions,
+    isPageAllowed,
 }
 
 export default UserSession
