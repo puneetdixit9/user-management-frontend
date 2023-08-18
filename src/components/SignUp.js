@@ -186,7 +186,7 @@ export default function SignUp() {
                             <Grid item xs={12} sm={6}>
                                 <Autocomplete
                                     id="department"
-                                    options={Array.from(new Set(subFunctionsData.map((option) => option.dept_name)))} // Make unique
+                                    options={Array.from(new Set(subFunctionsData.map((option) => option.dept_name)))}
                                     getOptionLabel={(option) => option}
                                     onChange={handleDepartmentChange}
                                     renderInput={(params) => (

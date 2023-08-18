@@ -32,6 +32,9 @@ import {
     fetchUserPermissions,
     fetchUserPermissionsSuccess,
     fetchUserPermissionsFailed,
+    updateUserPermissions,
+    updateUserPermissionsSuccess,
+    updateUserPermissionsFailed,
 
 } from '../reducer/projects'
 
@@ -151,5 +154,16 @@ export const getUserPermissions = (userId) => async dispatch => {
         return dispatch(fetchUserPermissionsSuccess(response.data))
     } catch (err) {
         return dispatch(fetchUserPermissionsFailed(err))
+    }
+}
+
+export const updateUserPermission = (userId, payload) => async dispatch => {
+    console.log('Calling Action : updateUserPermission()')
+    await dispatch(updateUserPermissions())
+    try {
+        const response = await apiClient.post(`${USER_PERMISSIONS}/${userId}`, payload)
+        return dispatch(updateUserPermissionsSuccess(response.data))
+    } catch (err) {
+        return dispatch(updateUserPermissionsFailed(err))
     }
 }

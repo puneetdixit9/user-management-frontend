@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom';
-import { getUserProfile, getSubFunctions, getRoles, getAvailablePermission, getUserPermissions } from '../redux/actions/projects';
+import { getUserProfile, getSubFunctions, getRoles, getAvailablePermission, getUserPermissions, updateUserDetails, updateUserPermission } from '../redux/actions/projects';
 import { Avatar, Typography, Container, Paper, TextField, Button, Grid, Switch, Autocomplete, Checkbox } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const UserProfile = () => {
     const { userId } = useParams();
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
+    const projectsState = useAppSelector(state => state.projectsReducer);
     const [userProfile, setUserProfile] = useState({})
     const [personalInfoEditing, setPersonalInfoEditing] = useState(false);
-    const projectsState = useAppSelector(state => state.projectsReducer);
     const [officialInfoEditing, setOfficalInfoEditing] = useState(false);
     const [subFunctionsData, setSubFunctionsData] = useState([])
     const [roles, setRoles] = useState([])
@@ -21,6 +22,9 @@ const UserProfile = () => {
     const [selectedDepartment, setSelectedDepartment] = useState({})
     const [availablePermissions, setAvailablePermissions] = useState([]);
     const [userPermissions, setUserPermissions] = useState([]);
+    const [userUpdatedPermissions, setUserUpdatedPermissions] = useState([]);
+    const [updatingPermissions, setUpdatingPermissions] = useState(false);
+    const [isPermissionsUpdated, setIsPermissionUpdated] = useState(false);
 
     useEffect(() => {
         dispatch(getRoles())
@@ -41,8 +45,36 @@ const UserProfile = () => {
         setSelectedDepartment(projectsState.subFunctions.find(subFunction => subFunction.dept_id === projectsState.userProfileData.dept_id)?.dept_name || '');
         setAvailablePermissions(projectsState.permissions)
         setUserPermissions(projectsState.userPermissions)
+        setUserUpdatedPermissions(projectsState.userPermissions)
     }, [projectsState.userProfileData, projectsState.subFunctions, projectsState.roles, projectsState.permissions, projectsState.userPermissions])
 
+    useEffect(() => {
+        const oldPermissions = userPermissions.map(permission => permission.permission_id)
+        const updatedPermissions = userUpdatedPermissions.map(permission => permission.permission_id)
+        const isPermissionAdded = !updatedPermissions.every(permissionId => oldPermissions.includes(permissionId))
+        const isPermissionRemoved = !oldPermissions.every(permissionId => updatedPermissions.includes(permissionId))
+
+        setIsPermissionUpdated(true)
+        if (isPermissionAdded && isPermissionRemoved) {
+            console.log("Permissions added and removed")
+        } else if (isPermissionAdded) {
+            console.log("Permission Added")
+        } else if (isPermissionRemoved) {
+            console.log("Permission Removed")
+        } else {
+            setIsPermissionUpdated(false)
+            console.log("No change in permissions")
+        }
+    }, [userUpdatedPermissions, userPermissions])
+
+    useEffect(() => {
+        if (!projectsState.userPermissionsUpdating) {
+            setUpdatingPermissions(false)
+            if (!projectsState.isError) {
+                setUserPermissions(userUpdatedPermissions)
+            }
+        }
+    }, [projectsState.userPermissionsUpdating])
 
     const handleDepartmentChange = (event, newValue) => {
         setSelectedDepartment(newValue)
@@ -57,15 +89,11 @@ const UserProfile = () => {
     };
 
     const handleTogglePermission = (permission) => {
-        if (userPermissions.some(selPerm => selPerm.permission_id === permission.permission_id)) {
-            handleRemovePermission(permission.permission_id);
+        if (userUpdatedPermissions.some(selPerm => selPerm.permission_id === permission.permission_id)) {
+            setUserUpdatedPermissions(userUpdatedPermissions.filter(selPerm => selPerm.permission_id !== permission.permission_id));
         } else {
-            setUserPermissions([...userPermissions, permission]);
+            setUserUpdatedPermissions([...userUpdatedPermissions, permission]);
         }
-    };
-
-    const handleRemovePermission = (permissionId) => {
-        setUserPermissions(userPermissions.filter(selPerm => selPerm.permission_id !== permissionId));
     };
 
     const handleEditPersonalInfoToggle = () => {
@@ -81,13 +109,30 @@ const UserProfile = () => {
         setOfficalInfoEditing(false);
     };
 
-    const handleDeactivate = () => {
+    const handleActiveInactiveUser = () => {
+        const payload = {
+            is_active: !userProfile.is_active
+        };
+        dispatch(updateUserDetails(userId, payload));
         setUserProfile(
             {
                 ...userProfile,
                 is_active: !userProfile.is_active
             }
         );
+    }
+
+    const handleUpdateUserPermission = () => {
+        const updatePermissionIds = userUpdatedPermissions.map(permission => permission.permission_id)
+        const payload = {
+            permission_ids: updatePermissionIds
+        }
+        dispatch(updateUserPermission(userId, payload))
+        setUpdatingPermissions(true)
+    }
+
+    const handleResetUserPermission = () => {
+        setUserUpdatedPermissions(userPermissions)
     }
 
 
@@ -98,11 +143,15 @@ const UserProfile = () => {
 
                 <Grid container alignItems="center" justifyContent="space-between" marginBottom={2}>
                     <Grid item>
-                        <Typography variant="h7" sx={{ mt: 2 }}>{userProfile.email} | {userProfile.role_id}</Typography>
+                        <Typography variant="h7" sx={{ mt: 2 }}>{userProfile.email} | {roles.find(role => role.role_id === userProfile.role_id)?.role_name || ""}</Typography>
                     </Grid>
                     <Grid item>
                         <Typography variant="body2">Deactivate User</Typography>
-                        <Switch checked={!userProfile.is_active} onChange={handleDeactivate} color="primary" />
+                        {projectsState.isUserUpdating ? (
+                            <CircularProgress size={20} />
+                        ) : (
+                            <Switch checked={!userProfile.is_active} onChange={handleActiveInactiveUser} color="primary" />
+                        )}
                     </Grid>
                 </Grid>
 
@@ -291,7 +340,7 @@ const UserProfile = () => {
                                     <div key={permission.permission_id} style={{ marginRight: '8px', marginBottom: '8px' }}>
                                         <label>
                                             <Checkbox
-                                                checked={userPermissions.some(selPerm => selPerm.permission_id === permission.permission_id)}
+                                                checked={userUpdatedPermissions.some(selPerm => selPerm.permission_id === permission.permission_id)}
                                                 onChange={() => handleTogglePermission(permission)}
                                             />
                                             {permission.application} - {permission.permission}
@@ -299,6 +348,26 @@ const UserProfile = () => {
                                     </div>
                                 ))}
                             </div>
+                            {isPermissionsUpdated ? (
+                                <>
+
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleUpdateUserPermission}
+                                        sx={{ marginRight: 2 }}
+                                        disabled={updatingPermissions}
+                                        startIcon={updatingPermissions ? <CircularProgress size={20} /> : null}
+                                    >
+                                        {updatingPermissions ? 'Updating...' : 'Update'}
+                                    </Button>
+                                    <Button variant="outlined" onClick={handleResetUserPermission}>
+                                        Reset
+                                    </Button>
+
+                                </>
+                            ) : (
+                                null
+                            )}
                         </Paper>
                     </Grid>
                 </Grid>

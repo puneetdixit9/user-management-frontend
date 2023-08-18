@@ -11,7 +11,9 @@ const initialState = {
     isError: false,
     userProfileData: {},
     permissions: [],
-    userPermissions: []
+    userPermissions: [],
+    isUserUpdating: false,
+    userPermissionsUpdating: false,
 }
 
 export const projectsReducer = createSlice({
@@ -102,21 +104,24 @@ export const projectsReducer = createSlice({
         updateUser(state, action) {
             return {
                 ...state,
-                message: ""
+                message: "",
+                isUserUpdating: true
             }
         },
         updateUserSuccess(state, action) {
             return {
                 ...state,
                 isError: false,
-                message: "User Details Updated"
+                message: "User Details Updated",
+                isUserUpdating: false
             }
         },
         updateUserFailed(state, action) {
             return {
                 ...state,
                 isError: true,
-                message: "Update User Failed"
+                message: "Update User Failed",
+                isUserUpdating: false
             }
         },
         fetchSubFunctions(state, action) {
@@ -219,6 +224,29 @@ export const projectsReducer = createSlice({
                 message: "Error in fetching user profile."
             }
         },
+        updateUserPermissions(state, action) {
+            return {
+                ...state,
+                message: "",
+                userPermissionsUpdating: true
+            }
+        },
+        updateUserPermissionsSuccess(state, action) {
+            return {
+                ...state,
+                isError: false,
+                userPermissionsUpdating: false,
+                message: "Permissions Updated."
+            }
+        },
+        updateUserPermissionsFailed(state, action) {
+            return {
+                ...state,
+                isError: true,
+                userPermissionsUpdating: false,
+                message: "Error in updating user permissions."
+            }
+        },
         resetUserState(state, action) {
             return {
                 ...state,
@@ -264,6 +292,9 @@ export const {
     fetchUserPermissions,
     fetchUserPermissionsSuccess,
     fetchUserPermissionsFailed,
+    updateUserPermissions,
+    updateUserPermissionsSuccess,
+    updateUserPermissionsFailed,
 } = projectsReducer.actions
 
 export default projectsReducer.reducer
