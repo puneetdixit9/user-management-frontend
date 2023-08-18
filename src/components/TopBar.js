@@ -22,7 +22,7 @@ import { resetUserDataState } from '../redux/actions/projects';
 const pages = [
     {
         label: 'Dashboard',
-        route: '/home',
+        route: '/',
     },
     {
         label: 'About',
@@ -206,10 +206,17 @@ const TopBar = () => {
                                 >
                                     <MenuItem
                                         onClick={() => {
-                                            navigate('/profile')
+                                            navigate('/profile');
                                         }}
                                     >
                                         Profile
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            navigate('/change-password')
+                                        }}
+                                    >
+                                        Change Password
                                     </MenuItem>
                                     <MenuItem
                                         onClick={() => handleLogout()}

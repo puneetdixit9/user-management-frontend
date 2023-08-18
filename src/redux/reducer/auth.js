@@ -1,13 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit'
 import UserSession from '../../services/auth'
+import { act } from 'react-test-renderer'
 
 const initialState = {
     access_token: null,
     users: [],
-    message : "",
+    message: "",
     isError: false,
-    isLoadingUsers : false,
+    isLoadingUsers: false,
     loginSuccess: false,
+    fetchPermissionSuccess: false,
+    fetchingPermissions: false,
 }
 
 export const authReducer = createSlice({
@@ -117,6 +120,7 @@ export const authReducer = createSlice({
 
         logout(state, action) {
             UserSession.removeUser()
+            UserSession.removeUserPermissions()
             return {
                 ...state,
                 isLogout: true,
@@ -124,6 +128,7 @@ export const authReducer = createSlice({
         },
         logoutSuccess(state, action) {
             UserSession.removeUser()
+            UserSession.removeUserPermissions()
             return {
                 ...state,
                 isLogout: false,
@@ -132,12 +137,38 @@ export const authReducer = createSlice({
         },
         logoutFailed(state, action) {
             UserSession.removeUser()
+            UserSession.removeUserPermissions()
             console.log(action.payload.response.data)
             return {
                 ...state,
                 isLogout: false,
                 message: action.payload.response.data['error'],
                 isError: true,
+            }
+        },
+        fetchPermissions(state, action) {
+            return {
+                ...state,
+                fetchPermissionSuccess: false,
+                fetchingPermissions: true,
+            }
+        },
+        fetchPermissionsSuccess(state, action) {
+            UserSession.setUserPermissions(action.payload.map(userPermission => ({ application: userPermission.application, permission: userPermission.permission })))
+            return {
+                ...state,
+                fetchPermissionSuccess: true,
+                isError: false,
+                fetchingPermissions: false,
+            }
+        },
+        fetchPermissionsFailed(state, action) {
+            console.log(action.payload.response.data)
+            return {
+                ...state,
+                fetchPermissionSuccess: false,
+                isError: true,
+                fetchingPermissions: false,
             }
         },
         resetStateItems(state, action) {
@@ -167,6 +198,9 @@ export const {
     logoutSuccess,
     logoutFailed,
     resetStateItems,
+    fetchPermissions,
+    fetchPermissionsSuccess,
+    fetchPermissionsFailed,
 } = authReducer.actions
 
 export default authReducer.reducer

@@ -1,5 +1,5 @@
 import apiClient from '../../services/apiClient'
-import { CHANGE_PASSWORD, LOGIN_API, REGISTER_API, USERS_API, LOGOUT_API } from '../../constants'
+import { CHANGE_PASSWORD, LOGIN_API, REGISTER_API, USERS_API, LOGOUT_API, USER_PERMISSIONS } from '../../constants'
 import {
     fetchLogin,
     fetchLoginSuccess,
@@ -17,6 +17,9 @@ import {
     logoutSuccess,
     logoutFailed,
     resetStateItems,
+    fetchPermissions,
+    fetchPermissionsSuccess,
+    fetchPermissionsFailed,
 } from '../reducer/auth'
 
 
@@ -92,6 +95,17 @@ export const logoutAction = () => async dispatch => {
         return await dispatch(logoutSuccess(response.data))
     } catch (err) {
         return await dispatch(logoutFailed(err))
+    }
+}
+
+export const getAllowedScreens = () => async dispatch => {
+    console.log('Calling Action : getAllowedScreens()')
+    await dispatch(fetchPermissions())
+    try {
+        const response = await apiClient.get(`${USER_PERMISSIONS}`)
+        return await dispatch(fetchPermissionsSuccess(response.data))
+    } catch (err) {
+        return await dispatch(fetchPermissionsFailed(err))
     }
 }
 

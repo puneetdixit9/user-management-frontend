@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
-import { login, resetState } from '../redux/actions/auth'
+import { login, resetState, getAllowedScreens } from '../redux/actions/auth'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useNavigate } from 'react-router-dom'
 import UserSession from '../services/auth'
@@ -29,10 +29,21 @@ export default function SignIn() {
     const [snackbarState, setSnackbarState] = useState(false)
 
     useEffect(() => {
+        
         if (UserSession.isAuthenticated()) {
-            navigate('/home')
+            if (!UserSession.getUserPermissions()) {
+                dispatch(getAllowedScreens())
+            } else {
+                const allowedScreens = UserSession.getUserPermissions()
+                const screens = allowedScreens?.filter(permission => permission.application === "ump").map(permission => permission.permission)
+                if (UserSession.isAdmin() || screens.includes("/")) {
+                    navigate("/")
+                } else {
+                    navigate("/profile", {state: {userId: UserSession.getUserId()}})
+                }
+            }
         }
-    }, [authState.loginSuccess])
+    }, [authState.loginSuccess, authState.fetchPermissionSuccess])
 
     useEffect(() => {
         return () => {

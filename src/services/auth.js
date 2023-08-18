@@ -23,7 +23,6 @@ const getUser = () => {
 }
 
 const setUser = user => {
-    // console.log(JSON.stringify(user))
     localStorage.setItem('user', JSON.stringify(user))
 }
 
@@ -40,15 +39,27 @@ const getUserName = () => {
 }
 
 const getUserRole = () => {
-    return JSON.parse(localStorage.getItem('user')).role
+    return JSON.parse(localStorage.getItem('user'))?.role
 }
 
 const isAdmin = () => {
-    return JSON.parse(localStorage.getItem('user')).role === 'admin'
+    return JSON.parse(localStorage.getItem('user'))?.role === 'admin'
 }
 
 const isAuthenticated = () => {
     return JSON.parse(localStorage.getItem('user')) !== null
+}
+
+const setUserPermissions = (permissions) => {
+    localStorage.setItem('userPermissions', JSON.stringify(permissions))
+}
+
+const getUserPermissions = () => {
+    return JSON.parse(localStorage.getItem('userPermissions'))
+}
+
+const removeUserPermissions = () => {
+    localStorage.removeItem('userPermissions')
 }
 
 const UserSession = {
@@ -64,6 +75,9 @@ const UserSession = {
     getUserRole,
     isAdmin,
     isAuthenticated,
+    setUserPermissions,
+    getUserPermissions,
+    removeUserPermissions,
 }
 
 export default UserSession

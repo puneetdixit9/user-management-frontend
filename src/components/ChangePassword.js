@@ -11,7 +11,7 @@ import SnackbarNotification from './SnackbarNotification'
 import { passwordResetAction } from '../redux/actions/auth'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
 
-const Profile = () => {
+const ChangePassword = () => {
     const dispatch = useAppDispatch()
     const authState = useAppSelector(state => state.authReducer)
 
@@ -128,4 +128,4 @@ const Profile = () => {
     )
 }
 
-export default Profile
+export default ChangePassword

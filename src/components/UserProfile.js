@@ -2,16 +2,41 @@ import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom';
-import { getUserProfile, getSubFunctions, getRoles, getAvailablePermission, getUserPermissions, updateUserDetails, updateUserPermission } from '../redux/actions/projects';
-import { Avatar, Typography, Container, Paper, TextField, Button, Grid, Switch, Autocomplete, Checkbox } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
+import { 
+    getUserProfile, 
+    getSubFunctions, 
+    getRoles, 
+    getAvailablePermission, 
+    getUserPermissions, 
+    updateUserDetails, 
+    updateUserPermission,
+} from '../redux/actions/projects';
+import { 
+    Avatar, 
+    Typography, 
+    Container, 
+    Paper, 
+    TextField, 
+    Button, 
+    Grid, 
+    Switch, 
+    Autocomplete, 
+    Checkbox,
+    CircularProgress,
+} from '@mui/material';
+import UserSession from '../services/auth';
 
 const UserProfile = () => {
-    const { userId } = useParams();
+    const { userId: routeUserId } = useParams();
+    const passedUserId = UserSession.getUserId()
+    const userId = routeUserId || passedUserId;
+
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
     const projectsState = useAppSelector(state => state.projectsReducer);
+
     const [userProfile, setUserProfile] = useState({})
+    const [userProfileCopy, setUserProfileCopy] = useState({})
     const [editingInfo, setEditingInfo] = useState(false);
     const [subFunctionsData, setSubFunctionsData] = useState([])
     const [roles, setRoles] = useState([])
@@ -29,26 +54,34 @@ const UserProfile = () => {
     const [showFunctionRequiredError, setShowFunctionRequiredError] = useState(false);
 
     useEffect(() => {
-        dispatch(getRoles())
-        dispatch(getSubFunctions())
-        dispatch(getUserProfile(userId))
-        dispatch(getAvailablePermission())
-        dispatch(getUserPermissions(userId))
-
+        if (UserSession.isAuthenticated()) {
+            dispatch(getRoles())
+            dispatch(getSubFunctions())
+            dispatch(getUserProfile(userId))
+            dispatch(getAvailablePermission())
+            dispatch(getUserPermissions(userId))
+        } else {
+            navigate("/signin")
+        }
     }, [])
 
     useEffect(() => {
         setUserProfile(projectsState.userProfileData)
+        setUserProfileCopy(projectsState.userProfileData)
         setSubFunctionsData(projectsState.subFunctions)
         setRoles(projectsState.roles)
-        setFilteredSubFunctions(projectsState.subFunctions.filter(subFunction => subFunction.dept_id === projectsState.userProfileData.dept_id))
-        setSelectedRole(projectsState.roles.find(role => role.role_id === projectsState.userProfileData.role_id));
-        setSelectedFunction(projectsState.subFunctions.find(subFunction => subFunction.func_id === projectsState.userProfileData.func_id));
-        setSelectedDepartment(projectsState.subFunctions.find(subFunction => subFunction.dept_id === projectsState.userProfileData.dept_id)?.dept_name || '');
         setAvailablePermissions(projectsState.permissions)
         setUserPermissions(projectsState.userPermissions)
         setUserUpdatedPermissions(projectsState.userPermissions)
     }, [projectsState.userProfileData, projectsState.subFunctions, projectsState.roles, projectsState.permissions, projectsState.userPermissions])
+
+
+    useEffect(() => {
+        setFilteredSubFunctions(subFunctionsData.filter(subFunction => subFunction.dept_id === userProfile.dept_id))
+        setSelectedFunction(subFunctionsData.find(subFunction => subFunction.func_id === userProfile.func_id));
+        setSelectedDepartment(subFunctionsData.find(subFunction => subFunction.dept_id === userProfile.dept_id)?.dept_name || '');
+        setSelectedRole(roles.find(role => role.role_id === userProfile.role_id));
+    }, [subFunctionsData, roles])
 
     useEffect(() => {
         const oldPermissions = userPermissions.map(permission => permission.permission_id)
@@ -119,6 +152,9 @@ const UserProfile = () => {
 
 
     const handleEditInfoToggle = () => {
+        if (editingInfo) {
+            setUserProfile(userProfileCopy)
+        }
         setEditingInfo(!editingInfo);
     };
 
@@ -185,7 +221,7 @@ const UserProfile = () => {
                         {projectsState.isUserUpdating ? (
                             <CircularProgress size={20} />
                         ) : (
-                            <Switch checked={!userProfile.is_active} onChange={handleActiveInactiveUser} color="primary" />
+                            <Switch checked={!userProfile.is_active} onChange={handleActiveInactiveUser} color="primary" disabled={!UserSession.isAdmin()} />
                         )}
                     </Grid>
                 </Grid>
@@ -292,7 +328,7 @@ const UserProfile = () => {
                             getOptionLabel={(option) => option}
                             onChange={handleDepartmentChange}
                             value={selectedDepartment}
-                            disabled={!editingInfo}
+                            disabled={!editingInfo || !UserSession.isAdmin()}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
@@ -311,7 +347,7 @@ const UserProfile = () => {
                             getOptionLabel={(option) => option.sub_function_name}
                             value={selectedFunction || null}
                             onChange={(event, newValue) => handleRoleOrFunctionChange("func_id", newValue)}
-                            disabled={!editingInfo}
+                            disabled={!editingInfo || !UserSession.isAdmin()}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
@@ -319,7 +355,7 @@ const UserProfile = () => {
                                     name="subFunction"
                                     label="Function"
                                     error={showFunctionRequiredError}
-                                    helperText={showFunctionRequiredError? 'Function Required to updated department.': ''}
+                                    helperText={showFunctionRequiredError ? 'Function Required to updated department.' : ''}
                                 />
                             )}
                             sx={{ mb: 2 }}
@@ -332,7 +368,7 @@ const UserProfile = () => {
                             getOptionLabel={(option) => (option ? option.role_name : '')}
                             value={selectedRole}
                             onChange={(event, newValue) => handleRoleOrFunctionChange("role_id", newValue)}
-                            disabled={!editingInfo}
+                            disabled={!editingInfo || !UserSession.isAdmin()}
                             sx={{ mb: 2 }}
                             renderInput={(params) => (
                                 <TextField
@@ -375,9 +411,9 @@ const UserProfile = () => {
                                     <div key={permission.permission_id} style={{ marginRight: '8px', marginBottom: '8px' }}>
                                         <label>
                                             <Checkbox
-                                                checked={userUpdatedPermissions.some(selPerm => selPerm.permission_id === permission.permission_id)}
+                                                checked={userUpdatedPermissions.some(selPerm => selPerm.permission_id === permission.permission_id) || roles.find(role => role.role_id === userProfile.role_id)?.role_name === "admin"}
                                                 onChange={() => handleTogglePermission(permission)}
-                                                disabled={!userProfile.is_active}
+                                                disabled={!userProfile.is_active || !UserSession.isAdmin()}
                                             />
                                             {permission.application} - {permission.permission}
                                         </label>
