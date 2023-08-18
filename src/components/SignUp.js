@@ -31,7 +31,7 @@ export default function SignUp() {
     const [snackbarState, setSnackbarState] = useState(false)
     const [subFunctionsData, setSubFunctionsData] = useState([])
     const [roles, setRoles] = useState([])
-    const [selectedDepartment, setSelectedDepartment] = useState(null);
+    const [selectedFunction, setSelectedFunction] = useState(null)
     const [filteredSubFunctions, setFilteredSubFunctions] = useState([]);
 
 
@@ -64,6 +64,7 @@ export default function SignUp() {
         } else {
             setFilteredSubFunctions(subFunctionsData);
         }
+        setSelectedFunction(null)
     };
 
 
@@ -199,6 +200,8 @@ export default function SignUp() {
                                     id="subFunction"
                                     options={filteredSubFunctions}
                                     getOptionLabel={(option) => option.sub_function_name}
+                                    onChange={(event, newValue) => setSelectedFunction(newValue)}
+                                    value={selectedFunction || null}
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}
