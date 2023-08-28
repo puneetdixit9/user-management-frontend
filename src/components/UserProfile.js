@@ -2,25 +2,25 @@ import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom';
-import { 
-    getUserProfile, 
-    getSubFunctions, 
-    getRoles, 
-    getAvailablePermission, 
-    getUserPermissions, 
-    updateUserDetails, 
+import {
+    getUserProfile,
+    getSubFunctions,
+    getRoles,
+    getAvailablePermission,
+    getUserPermissions,
+    updateUserDetails,
     updateUserPermission,
 } from '../redux/actions/projects';
-import { 
-    Avatar, 
-    Typography, 
-    Container, 
-    Paper, 
-    TextField, 
-    Button, 
-    Grid, 
-    Switch, 
-    Autocomplete, 
+import {
+    Avatar,
+    Typography,
+    Container,
+    Paper,
+    TextField,
+    Button,
+    Grid,
+    Switch,
+    Autocomplete,
     Checkbox,
     CircularProgress,
 } from '@mui/material';
@@ -415,7 +415,7 @@ const UserProfile = () => {
                                                 onChange={() => handleTogglePermission(permission)}
                                                 disabled={!userProfile.is_active || !UserSession.isAdmin()}
                                             />
-                                            {permission.application} - {permission.permission}
+                                            {permission.application} - {permission.model || ""} {permission.permission}
                                         </label>
                                     </div>
                                 ))}
