@@ -221,7 +221,11 @@ const UserProfile = () => {
                         {projectsState.isUserUpdating ? (
                             <CircularProgress size={20} />
                         ) : (
-                            <Switch checked={!userProfile.is_active} onChange={handleActiveInactiveUser} color="primary" disabled={!UserSession.isAdmin()} />
+                            <Switch
+                                checked={!userProfile.is_active}
+                                onChange={handleActiveInactiveUser}
+                                color="primary" disabled={!UserSession.isAdmin() || UserSession.getUserId() === userProfile.user_id}
+                            />
                         )}
                     </Grid>
                 </Grid>

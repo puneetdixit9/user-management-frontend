@@ -14,10 +14,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { register, resetState } from '../redux/actions/auth'
 import { getSubFunctions, getRoles } from '../redux/actions/projects'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import SnackbarNotification from './SnackbarNotification'
-import { setRef } from '@mui/material'
 
 
 const theme = createTheme()
@@ -25,6 +24,9 @@ const theme = createTheme()
 export default function SignUp() {
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const redirectValue = queryParams.get('redirect');
 
     const authState = useAppSelector(state => state.authReducer)
     const projectsState = useAppSelector(state => state.projectsReducer);
@@ -43,6 +45,16 @@ export default function SignUp() {
             dispatch(resetState())
         };
     }, [])
+
+
+    useEffect(() => {
+        if (redirectValue && !authState.isError && snackbarState && authState.message) {
+          const link = document.getElementById('redirect-link');
+          if (link) {
+            link.click();
+          }
+        }
+      }, [snackbarState, authState.message]);
 
 
     useEffect(() => {
@@ -247,7 +259,6 @@ export default function SignUp() {
                         </Grid>
                     </Box>
                 </Box>
-                {/* <Copyright sx={{ mt: 5 }} /> */}
             </Container>
             {snackbarState && authState.message && (
                 <>
@@ -259,6 +270,11 @@ export default function SignUp() {
                         onClose={() => setSnackbarState(false)}
                         severity={authState.isError ? 'error' : 'success'}
                     />
+                    {redirectValue && !authState.isError && (
+                        <Grid item>
+                            <a id="redirect-link" href={redirectValue} target="_self" rel="noopener noreferrer"/>
+                        </Grid>
+                    )}
                 </>
             )}
         </ThemeProvider>
