@@ -12,7 +12,7 @@ import PrivateRoute from './components/AuthorisedRoutes'
 function App() {
 
     return (
-        <BrowserRouter>
+        <BrowserRouter basename={process.env.REACT_APP_BASE_PATH}>
             <TopBar />
             <div style={{ marginTop: 10 }}>
                 <Routes>

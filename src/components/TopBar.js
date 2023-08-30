@@ -50,6 +50,11 @@ const TopBar = () => {
         setAnchorElNav(null)
     };
 
+    const handleGoTOHome = () => {
+        handleCloseNavMenu()
+        navigate("/")
+    }
+
     const handleCloseUserMenu = () => {
         setAnchorElUser(null)
     };
@@ -135,9 +140,8 @@ const TopBar = () => {
                     >
                         {(UserSession.isAuthenticated() && (UserSession.isPageAllowed("/") || UserSession.isAdmin())) && (
                             <Button
-                                href="/"
                                 key="Home"
-                                onClick={handleCloseNavMenu}
+                                onClick={handleGoTOHome}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
                                 Home
