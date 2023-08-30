@@ -72,12 +72,12 @@ export default function PendingUsersTable(props) {
                                     to={`/profile/${row.user_id}`}
                                 > {row.email} </Link>
                             </TableCell>
-                            <TableCell align="center">{row.first_name}</TableCell>
-                            <TableCell align="center">{row.last_name}</TableCell>
+                            <TableCell align="center">{row.first_name? row.first_name : "-"}</TableCell>
+                            <TableCell align="center">{row.last_name ? row.last_name : "-"}</TableCell>
                             <TableCell align="center">{row.username}</TableCell>
-                            <TableCell align="center">{row.dept_name}</TableCell>
-                            <TableCell align="center">{row.function_name}</TableCell>
-                            <TableCell align="center">{row.role_name}</TableCell>
+                            <TableCell align="center">{row.dept_name? row.dept_name : "-"}</TableCell>
+                            <TableCell align="center">{row.function_name? row.function_name : "-"}</TableCell>
+                            <TableCell align="center">{row.role_name? row.role_name : "-"}</TableCell>
                             <TableCell align="center">{row.employee_code}</TableCell>
                             <TableCell align="center">{row.manager_name}</TableCell>
                             <TableCell align="center">{row.created_on}</TableCell>
@@ -95,7 +95,6 @@ export default function PendingUsersTable(props) {
                                     variant="contained"
                                     color="primary"
                                     sx={{ width: "110px", fontSize: "1" }}
-                                // onClick={() => approveOrReject(row.user_id)}
                                 >
                                     <CancelOutlinedIcon />
                                     Reject

@@ -43,7 +43,6 @@ const Home = () => {
 
     const handlePendingUserApproval = (userId) => {
         const payload = {
-            role_id: 2,
             approved: true,
         };
         dispatch(updateUserDetails(userId, payload));

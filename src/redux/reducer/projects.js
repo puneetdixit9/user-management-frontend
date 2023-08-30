@@ -80,27 +80,6 @@ export const projectsReducer = createSlice({
                 isError: true,
             }
         },
-        approveUser(state, action) {
-            return {
-                ...state,
-                message: ""
-            }
-        },
-        approveUserSuccess(state, action) {
-            return {
-                ...state,
-                isError: false,
-                message: "User Approved"
-            }
-        },
-        approveUserFailed(state, action) {
-            console.log(action.payload)
-            return {
-                ...state,
-                isError: true,
-                message: "Approve User Failed"
-            }
-        },
         updateUser(state, action) {
             return {
                 ...state,
@@ -270,9 +249,6 @@ export const {
     fetchInActiveUsers,
     fetchInActiveUsersSuccess,
     fetchInActiveUsersFailed,
-    approveUser,
-    approveUserSuccess,
-    approveUserFailed,
     updateUser,
     updateUserSuccess,
     updateUserFailed,

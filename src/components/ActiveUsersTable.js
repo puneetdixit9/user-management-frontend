@@ -11,8 +11,6 @@ import {
     TextField,
     Grid,
 } from '@mui/material';
-import DoneIcon from '@mui/icons-material/Done';
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
 
@@ -71,8 +69,8 @@ export default function ActiveUsersTable(props) {
                                     to={`/profile/${row.user_id}`}
                                 > {row.email} </Link>
                             </TableCell>
-                            <TableCell align="center">{row.first_name}</TableCell>
-                            <TableCell align="center">{row.last_name}</TableCell>
+                            <TableCell align="center">{row.first_name? row.first_name : "-"}</TableCell>
+                            <TableCell align="center">{row.last_name ? row.last_name : "-"}</TableCell>
                             <TableCell align="center">{row.username}</TableCell>
                             <TableCell align="center">{row.dept_name ? row.dept_name : "-"}</TableCell>
                             <TableCell align="center">{row.function_name ? row.function_name : "-"}</TableCell>

@@ -1,5 +1,5 @@
 import apiClient from '../../services/apiClient'
-import { APPROVE_USER, USERS, USER, SUB_FUNCTIONS, PERMISSIONS, USER_PERMISSIONS, ROLES } from '../../constants'
+import { USERS, USER, SUB_FUNCTIONS, PERMISSIONS, USER_PERMISSIONS, ROLES } from '../../constants'
 import {
     fetchPendingUsers,
     fetchPendingUsersSuccess,
@@ -10,9 +10,6 @@ import {
     fetchInActiveUsers,
     fetchInActiveUsersSuccess,
     fetchInActiveUsersFailed,
-    approveUser,
-    approveUserSuccess,
-    approveUserFailed,
     updateUser,
     updateUserSuccess,
     updateUserFailed,
@@ -84,16 +81,6 @@ export const updateUserDetails = (userId, payload) => async dispatch => {
     }
 }
 
-export const approvePendingUser = (userId, payload) => async dispatch => {
-    console.log('Calling Action : approveUser()')
-    await dispatch(approveUser())
-    try {
-        const response = await apiClient.post(`${APPROVE_USER}/${userId}`, payload)
-        return dispatch(approveUserSuccess(response.data))
-    } catch (err) {
-        return dispatch(approveUserFailed(err))
-    }
-}
 
 export const resetUserDataState = () => async dispatch => {
     console.log('Calling Action : resetUserDataState()')

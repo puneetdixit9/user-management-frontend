@@ -68,8 +68,8 @@ export default function InactiveUsersTable(props) {
                                     to={`/profile/${row.user_id}`}
                                 > {row.email} </Link>
                             </TableCell>
-                            <TableCell align="center">{row.first_name}</TableCell>
-                            <TableCell align="center">{row.last_name}</TableCell>
+                            <TableCell align="center">{row.first_name? row.first_name : "-"}</TableCell>
+                            <TableCell align="center">{row.last_name ? row.last_name : "-"}</TableCell>
                             <TableCell align="center">{row.username}</TableCell>
                             <TableCell align="center">{row.deactivated_on}</TableCell>
                             <TableCell align="center">{row.deactivated_by}</TableCell>
